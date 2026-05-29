@@ -63,30 +63,11 @@
     if (!navToggle.querySelector('svg')) navToggle.innerHTML = navIconOpen;
     navToggle.setAttribute('aria-controls', 'mobile-nav');
     mobileNav.setAttribute('id', 'mobile-nav');
-    // The inline boot script in each HTML file (see end of <body>) already wires
-    // the toggle's click handler. Adding another here would cause the menu to
-    // open then immediately close again. Only wire the click if not already wired.
-    if (!navToggle.dataset.bootWired) {
-      navToggle.dataset.bootWired = '1';
-      navToggle.setAttribute('aria-expanded', 'false');
-      navToggle.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav();
-      });
-      mobileNav.addEventListener('click', (e) => {
-        if (e.target === mobileNav) closeMobileNav();
-      });
-    }
-    // Always wire these — they upgrade the inline boot script with nicer icon
-    // swaps on toggle (the inline boot doesn't swap the SVG).
-    mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMobileNav));
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMobileNav();
-    });
-    // Upgrade close/open to also swap the icon (inline boot only toggles aria/overflow)
-    const _origClose = closeMobileNav, _origOpen = openMobileNav;
-    // (closeMobileNav and openMobileNav already swap the icon; nothing else to upgrade here)
+    // The inline boot script in each HTML file (end of <body>) handles the
+    // toggle click + open/close + icon swap on its own. We intentionally do
+    // NOT attach another click listener here — a second one would cancel
+    // out the first by toggling state right back. See commit history for
+    // the bug this used to cause.
   }
   document.querySelectorAll('[data-mobile-sub]').forEach((trigger) => {
     trigger.setAttribute('aria-expanded', 'false');
