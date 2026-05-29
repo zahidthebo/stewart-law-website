@@ -706,7 +706,7 @@ h4 { font-size: 1.25rem; font-family: var(--font-body); font-weight: 600; letter
 .process { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; counter-reset: process; }
 .process__step {
   position: relative;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.5rem 1.75rem;
   background: var(--color-white);
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border);
@@ -714,17 +714,22 @@ h4 { font-size: 1.25rem; font-family: var(--font-body); font-weight: 600; letter
   transition: all var(--duration);
 }
 .process__step::before {
-  content: '0' counter(process);
-  position: absolute;
-  top: 1.25rem;
-  right: 1.5rem;
+  content: counter(process);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-cream), var(--color-gold-soft));
+  color: var(--color-primary);
   font-family: var(--font-display);
-  font-size: 2.5rem;
-  color: var(--color-gold-soft);
-  line-height: 1;
+  font-size: 1.15rem;
   font-weight: 600;
+  margin-bottom: 1rem;
 }
-.process__step:hover { background: var(--color-cream); transform: translateY(-3px); }
+.process__step:hover { background: var(--color-cream); transform: translateY(-3px); border-color: var(--color-gold-soft); }
+.process__step:hover::before { background: var(--color-primary); color: var(--color-white); }
 .process__step h4 { margin-top: 0; font-family: var(--font-display); font-weight: 600; font-size: 1.18rem; color: var(--color-ink); }
 .process__step p { font-size: 0.92rem; color: var(--color-muted); margin-bottom: 0; }
 
@@ -1169,11 +1174,4 @@ html.js .reveal.is-visible { transform: translateY(0); }
 
 /* ----- 26. RESPONSIVE ----- */
 @media (max-width: 1240px) {
-  .nav__link { padding: 0.45rem 0.5rem; font-size: 0.85rem; }
-  .nav__cta .btn { padding: 0.5rem 0.85rem; font-size: 0.82rem; }
-  .brand__name { font-size: 0.98rem; }
-  .brand__tag { font-size: 0.58rem; letter-spacing: 0.1em; }
-  .brand__mark { width: 48px; height: 48px; }
-}
-@media (max-width: 1024px) {
-  .nav__list, .
+  .nav__link { padding: 0.45rem 
