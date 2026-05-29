@@ -60,11 +60,14 @@
   };
 
   if (navToggle && mobileNav) {
-    navToggle.innerHTML = navIconOpen;
+    // Only swap to JS-provided icon if button is empty (inline SVG fallback already in HTML otherwise)
+    if (!navToggle.querySelector('svg')) navToggle.innerHTML = navIconOpen;
     navToggle.setAttribute('aria-expanded', 'false');
     navToggle.setAttribute('aria-controls', 'mobile-nav');
     mobileNav.setAttribute('id', 'mobile-nav');
-    navToggle.addEventListener('click', () => {
+    navToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav();
     });
     // Close on link click
@@ -72,6 +75,10 @@
     // Close on ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMobileNav();
+    });
+    // Close when tapping backdrop area (outside the inner panel)
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target === mobileNav) closeMobileNav();
     });
   }
   document.querySelectorAll('[data-mobile-sub]').forEach((trigger) => {
@@ -265,15 +272,3 @@
       if (success) {
         success.classList.add('is-visible');
         success.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      setTimeout(() => form.reset(), 250);
-    });
-  }
-
-  /* ----- Smooth anchor scroll with real header offset ----- */
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-      const id = this.getAttribute('href');
-      if (!id || id.length < 2) {
-        e.preventDefault();
-        return;
