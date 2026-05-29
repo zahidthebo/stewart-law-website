@@ -5,9 +5,12 @@
 (function () {
   'use strict';
 
-  // Mark JS available so CSS .no-js fallback can flip
-  document.documentElement.classList.remove('no-js');
-  document.documentElement.classList.add('js');
+  // Mark JS available — but ONLY after we know reveal observer will work,
+  // so a JS error elsewhere can't hide content.
+  const enableJsMode = () => {
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+  };
 
   /* ----- Sticky header ----- */
   const header = document.querySelector('.site-header');
@@ -118,6 +121,7 @@
   /* ----- Reveal on scroll ----- */
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length && 'IntersectionObserver' in window) {
+    enableJsMode();
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
@@ -125,11 +129,21 @@
           obs.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-    revealEls.forEach((el) => obs.observe(el));
-  } else {
-    revealEls.forEach((el) => el.classList.add('is-visible'));
+    }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
+    revealEls.forEach((el) => {
+      // If already in viewport at load time, mark visible immediately
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('is-visible');
+      } else {
+        obs.observe(el);
+      }
+    });
   }
+  // Safety net: after 1.5 seconds, force everything visible regardless
+  setTimeout(() => {
+    document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
+  }, 1500);
 
   /* ----- Count-up numbers ----- */
   const counters = document.querySelectorAll('[data-count]');
@@ -263,17 +277,3 @@
       if (!id || id.length < 2) {
         e.preventDefault();
         return;
-      }
-      const target = document.querySelector(id);
-      if (target) {
-        e.preventDefault();
-        const headerH = (document.querySelector('.site-header') || {}).offsetHeight || 100;
-        const top = target.getBoundingClientRect().top + window.scrollY - headerH - 16;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
-    });
-  });
-
-  /* ----- Year stamp ----- */
-  document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
-})();
