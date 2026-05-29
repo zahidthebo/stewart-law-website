@@ -69,18 +69,21 @@
   <a href="https://calendly.com/meetwithstewartlaw" target="_blank" rel="noopener" class="fab" aria-label="Book a consultation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Book Consultation</a>
 </div>
 <script>
-/* Inline hamburger fallback — runs immediately, no dependency on main.js */
+/* Inline hamburger fallback — wires the toggle even if main.js fails to load.
+   Sets t.dataset.bootWired so main.js will not double-wire. */
 (function(){
-  var t=document.querySelector('[data-nav-toggle]');
-  var n=document.querySelector('[data-mobile-nav]');
-  if(!t||!n)return;
-  if(t.dataset.bootWired)return; t.dataset.bootWired='1';
-  function close(){n.classList.remove('is-open');t.setAttribute('aria-expanded','false');document.body.style.overflow='';}
-  function open(){n.classList.add('is-open');t.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
-  t.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();n.classList.contains('is-open')?close():open();});
-  n.addEventListener('click',function(e){if(e.target===n)close();});
-  n.querySelectorAll('a').forEach(function(a){a.addEventListener('click',close);});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+  var t=document.querySelector("[data-nav-toggle]");
+  var n=document.querySelector("[data-mobile-nav]");
+  if(!t||!n) return;
+  if(t.dataset.bootWired) return; t.dataset.bootWired="1";
+  var ICON_OPEN=t.innerHTML;
+  var ICON_CLOSE="<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\" stroke-linecap=\"round\" aria-hidden=\"true\"><line x1=\"6\" y1=\"6\" x2=\"18\" y2=\"18\"/><line x1=\"6\" y1=\"18\" x2=\"18\" y2=\"6\"/></svg>";
+  function close(){n.classList.remove("is-open");t.setAttribute("aria-expanded","false");t.innerHTML=ICON_OPEN;document.body.style.overflow="";}
+  function open(){n.classList.add("is-open");t.setAttribute("aria-expanded","true");t.innerHTML=ICON_CLOSE;document.body.style.overflow="hidden";}
+  t.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();n.classList.contains("is-open")?close():open();});
+  n.addEventListener("click",function(e){if(e.target===n) close();});
+  n.querySelectorAll("a").forEach(function(a){a.addEventListener("click",close);});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape" && n.classList.contains("is-open")) close();});
 })();
 </script>
 <script src="assets/js/main.js"></script>
