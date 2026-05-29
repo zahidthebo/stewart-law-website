@@ -3,11 +3,10 @@
     admin off
 }
 
-:{$PORT:8080} {
+:80 {
     root * /srv
     encode gzip zstd
 
-    # Clean URLs: /about → about.html
     try_files {path} {path}.html {path}/index.html
 
     file_server
