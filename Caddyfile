@@ -1,18 +1,23 @@
-:{$PORT:80} {
+{
+    auto_https off
+    admin off
+}
+
+:{$PORT:8080} {
     root * /srv
     encode gzip zstd
 
-    # Try clean URLs (e.g. /about → about.html), then fall back to 404 page
-    try_files {path} {path}.html {path}/index.html /404.html
+    # Clean URLs: /about → about.html
+    try_files {path} {path}.html {path}/index.html
 
     file_server
+
     header {
         X-Content-Type-Options "nosniff"
         Referrer-Policy "strict-origin-when-cross-origin"
-        Permissions-Policy "geolocation=(), camera=(), microphone=()"
         Cache-Control "public, max-age=3600"
     }
-    # Long cache for fingerprinted static assets folder
+
     @assets path /assets/*
     header @assets Cache-Control "public, max-age=2592000, immutable"
 
