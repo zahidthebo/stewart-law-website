@@ -4,7 +4,9 @@ Modern redesign of the website for **The Stewart Law Practice, PC** (Alpharetta,
 
 ## Live site
 
-Will be added after Railway deployment.
+**Preview URL:** https://stewart-law-website-production.up.railway.app
+
+(Pointing the real `thestewartlawpractice.com` domain will replace this once DNS is updated.)
 
 ## Stack
 
@@ -45,10 +47,4 @@ python3 -m http.server 8080
 - Primary: `#6B1F2E` (burgundy, from the crest)
 - Accent: `#C8A968` (gold)
 - Accent (highlight): `#B23A3A` (warm red, hero keyword)
-- Surface: `#FAF6EF` (warm ivory) / `#F3ECDE` (cream)
-- Display: Playfair Display
-- Body: Inter
-
-## Owner
-
-Deborah Stewart, Esq. — Founding Attorney
+- Surface: `#FAF6EF` (war
