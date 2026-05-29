@@ -20,9 +20,20 @@
     header.classList.toggle('is-scrolled', window.scrollY > 18);
   };
 
-  /* ----- FAB show on scroll ----- */
+  /* ----- FAB + back-to-top show on scroll ----- */
   const fab = document.querySelector('.fab');
-  const updateFab = () => { if (fab) fab.classList.toggle('is-visible', window.scrollY > 600); };
+  const backToTop = document.querySelector('.back-to-top');
+  const updateFab = () => {
+    const past = window.scrollY > 400;
+    if (fab) fab.classList.toggle('is-visible', past);
+    if (backToTop) backToTop.classList.toggle('is-visible', past);
+  };
+  if (backToTop) {
+    backToTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
 
   let rafPending = false;
   const onScroll = () => {
@@ -265,10 +276,4 @@
         'Topic: ' + (data.topic || '') + '\n\n' +
         'Message:\n' + (data.message || '')
       );
-      const mailto = 'mailto:dstewart@thestewartlawpractice.com?subject=' + subject + '&body=' + bodyText;
-      window.location.href = mailto;
-
-      const success = form.querySelector('[data-form-success]');
-      if (success) {
-        success.classList.add('is-visible');
-        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const mailt
