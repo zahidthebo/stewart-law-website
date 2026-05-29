@@ -1,28 +1,20 @@
 /* ==========================================================================
-   The Stewart Law Practice — Interaction Layer (v2 post-QA)
+   The Stewart Law Practice — Interaction Layer
    ========================================================================== */
 
 (function () {
   'use strict';
 
-  // Mark JS available — but ONLY after we know reveal observer will work,
-  // so a JS error elsewhere can't hide content.
-  const enableJsMode = () => {
-    document.documentElement.classList.remove('no-js');
-    document.documentElement.classList.add('js');
-  };
-
   /* ----- Sticky header ----- */
   const header = document.querySelector('.site-header');
-  let lastScroll = 0;
   const updateHeader = () => {
     if (!header) return;
     header.classList.toggle('is-scrolled', window.scrollY > 18);
   };
 
-  /* ----- Back-to-top shows after scrolling; Book Consultation is always visible ----- */
+  /* ----- Back-to-top (FAB Book Consultation is always visible) ----- */
   const backToTop = document.querySelector('.back-to-top');
-  const updateFab = () => {
+  const updateBackToTop = () => {
     if (backToTop) backToTop.classList.toggle('is-visible', window.scrollY > 200);
   };
   if (backToTop) {
@@ -38,12 +30,12 @@
     rafPending = true;
     requestAnimationFrame(() => {
       updateHeader();
-      updateFab();
+      updateBackToTop();
       rafPending = false;
     });
   };
   updateHeader();
-  updateFab();
+  updateBackToTop();
   window.addEventListener('scroll', onScroll, { passive: true });
 
   /* ----- Mobile nav ----- */
@@ -68,7 +60,6 @@
   };
 
   if (navToggle && mobileNav) {
-    // Only swap to JS-provided icon if button is empty (inline SVG fallback already in HTML otherwise)
     if (!navToggle.querySelector('svg')) navToggle.innerHTML = navIconOpen;
     navToggle.setAttribute('aria-expanded', 'false');
     navToggle.setAttribute('aria-controls', 'mobile-nav');
@@ -78,13 +69,10 @@
       e.stopPropagation();
       mobileNav.classList.contains('is-open') ? closeMobileNav() : openMobileNav();
     });
-    // Close on link click
     mobileNav.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMobileNav));
-    // Close on ESC
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) closeMobileNav();
     });
-    // Close when tapping backdrop area (outside the inner panel)
     mobileNav.addEventListener('click', (e) => {
       if (e.target === mobileNav) closeMobileNav();
     });
@@ -100,16 +88,14 @@
     });
   });
 
-  /* ----- Desktop dropdowns: touch / click support ----- */
+  /* ----- Desktop dropdowns: click/touch support ----- */
   const dropdownParents = document.querySelectorAll('.nav__item.has-dropdown');
   dropdownParents.forEach((parent) => {
     const trigger = parent.querySelector('.nav__link');
     if (!trigger) return;
-    // If trigger is href="#" or non-navigating, intercept click to toggle
     const href = trigger.getAttribute('href') || '';
     const isNonNav = href === '#' || href === '';
     trigger.addEventListener('click', (e) => {
-      // On coarse pointers (touch) or for non-navigating triggers, intercept
       const isTouch = window.matchMedia('(pointer: coarse)').matches;
       if (isNonNav || isTouch) {
         e.preventDefault();
@@ -120,23 +106,23 @@
       }
     });
   });
-  // Close dropdowns when clicking outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.nav__item.has-dropdown')) {
-      dropdownParents.forEach((p) => { p.classList.remove('is-open'); const t = p.querySelector('.nav__link'); if (t) t.setAttribute('aria-expanded', 'false'); });
+      dropdownParents.forEach((p) => {
+        p.classList.remove('is-open');
+        const t = p.querySelector('.nav__link');
+        if (t) t.setAttribute('aria-expanded', 'false');
+      });
     }
   });
-  // Close on ESC
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      dropdownParents.forEach((p) => p.classList.remove('is-open'));
-    }
+    if (e.key === 'Escape') dropdownParents.forEach((p) => p.classList.remove('is-open'));
   });
 
-  /* ----- Reveal on scroll ----- */
+  /* ----- Reveal on scroll (content stays visible by default; only transforms) ----- */
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length && 'IntersectionObserver' in window) {
-    enableJsMode();
+    document.documentElement.classList.add('js');
     const obs = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
@@ -146,7 +132,6 @@
       });
     }, { threshold: 0, rootMargin: '0px 0px 0px 0px' });
     revealEls.forEach((el) => {
-      // If already in viewport at load time, mark visible immediately
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom > 0) {
         el.classList.add('is-visible');
@@ -155,7 +140,6 @@
       }
     });
   }
-  // Safety net: after 1.5 seconds, force everything visible regardless
   setTimeout(() => {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-visible'));
   }, 1500);
@@ -163,7 +147,6 @@
   /* ----- Count-up numbers ----- */
   const counters = document.querySelectorAll('[data-count]');
   if (counters.length && 'IntersectionObserver' in window) {
-    // Pre-blank to avoid pre-paint flicker
     counters.forEach((c) => { c.style.visibility = 'hidden'; });
     const cObs = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -190,7 +173,7 @@
     counters.forEach((c) => cObs.observe(c));
   }
 
-  /* ----- FAQ accordion (accessible) ----- */
+  /* ----- FAQ accordion ----- */
   document.querySelectorAll('.faq__item').forEach((item, idx) => {
     const trigger = item.querySelector('.faq__trigger');
     const body = item.querySelector('.faq__body');
@@ -207,11 +190,9 @@
       if (isOpen) {
         body.hidden = false;
         body.style.maxHeight = body.scrollHeight + 'px';
-        // After transition end, set to none so resize doesn't clip
         const onEnd = () => { body.style.maxHeight = 'none'; body.removeEventListener('transitionend', onEnd); };
         body.addEventListener('transitionend', onEnd);
       } else {
-        // Snap to current pixel height then transition to 0 next frame
         body.style.maxHeight = body.scrollHeight + 'px';
         requestAnimationFrame(() => { body.style.maxHeight = '0px'; });
         const onEnd2 = () => { body.hidden = true; body.removeEventListener('transitionend', onEnd2); };
@@ -263,7 +244,6 @@
         if (!valid && !firstInvalid) firstInvalid = field;
       });
       if (firstInvalid) { firstInvalid.focus(); return; }
-      // Build a mailto fallback so the form actually does something
       const data = Object.fromEntries(new FormData(form).entries());
       const subject = encodeURIComponent('New inquiry — ' + (data.topic || 'General') + ' — ' + (data.firstName || '') + ' ' + (data.lastName || ''));
       const bodyText = encodeURIComponent(
@@ -273,4 +253,33 @@
         'Topic: ' + (data.topic || '') + '\n\n' +
         'Message:\n' + (data.message || '')
       );
-      const mailto = 'mailto:dstewart@thestewartlawpractice.com?subject=' + subject + '&body=' + bodyTe
+      window.location.href = 'mailto:dstewart@thestewartlawpractice.com?subject=' + subject + '&body=' + bodyText;
+      const success = form.querySelector('[data-form-success]');
+      if (success) {
+        success.classList.add('is-visible');
+        success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      setTimeout(() => form.reset(), 250);
+    });
+  }
+
+  /* ----- Smooth anchor scroll with real header offset ----- */
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const id = this.getAttribute('href');
+      if (!id || id.length < 2) {
+        e.preventDefault();
+        return;
+      }
+      const target = document.querySelector(id);
+      if (target) {
+        e.preventDefault();
+        const headerH = (document.querySelector('.site-header') || {}).offsetHeight || 100;
+        const top = target.getBoundingClientRect().top + window.scrollY - headerH - 16;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    });
+  });
+
+  /* ----- Year stamp ----- */
+  document.querySelectorAll('[data-year]').forEach((el) => { el.textC
