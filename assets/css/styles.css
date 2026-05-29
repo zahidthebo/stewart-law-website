@@ -116,7 +116,13 @@ h1, h2, h3, h4, h5 {
   letter-spacing: -0.01em;
 }
 h1 { font-size: clamp(2.4rem, 5.2vw, 4.2rem); font-weight: 600; letter-spacing: -0.02em; }
-.hero__title { font-feature-settings: "liga" 0, "dlig" 0, "calt" 0; letter-spacing: -0.015em; }
+.hero__title,
+.hero__title * {
+  font-variant-ligatures: no-common-ligatures no-contextual no-discretionary-ligatures no-historical-ligatures;
+  -webkit-font-feature-settings: "liga" 0, "clig" 0, "dlig" 0, "hlig" 0, "calt" 0;
+  font-feature-settings: "liga" 0, "clig" 0, "dlig" 0, "hlig" 0, "calt" 0;
+}
+.hero__title { letter-spacing: 0.005em; }
 .hero__title-accent {
   color: var(--color-error);
   font-style: italic;
@@ -1161,7 +1167,4 @@ html.js .reveal.is-visible { transform: translateY(0); }
   .topbar__contact { gap: 0.85rem; }
   .hero__badge--top { display: none; }
   .hero__badge--bottom { display: none; }
-  .deborah-feature__stamp { width: 100px; height: 100px; right: -0.5rem; bottom: -0.5rem; padding: 0.5rem; }
-  .deborah-feature__stamp-num { font-size: 1.6rem; }
-  .deborah-feature__quote { font-size: 1.15rem; padding-left: 1.5rem; }
-  .form-row { gri
+  
