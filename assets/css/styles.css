@@ -1124,14 +1124,13 @@ h4 { font-size: 1.25rem; font-family: var(--font-body); font-weight: 600; letter
   font-weight: 600;
   font-size: 0.95rem;
   box-shadow: 0 10px 28px rgba(107,31,46,0.35);
-  opacity: 0;
-  transform: translateY(10px) scale(0.95);
-  visibility: hidden;
-  transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease), background var(--duration) var(--ease);
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+  transition: transform var(--duration) var(--ease), background var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
   text-decoration: none;
 }
-.fab.is-visible { opacity: 1; transform: translateY(0) scale(1); visibility: visible; }
-.fab:hover { background: var(--color-primary-dark); color: var(--color-white); transform: translateY(-2px) scale(1); }
+.fab:hover { background: var(--color-primary-dark); color: var(--color-white); transform: translateY(-3px); box-shadow: 0 14px 32px rgba(107,31,46,0.45); }
 .fab svg { width: 16px; height: 16px; flex: none; }
 
 .back-to-top {
@@ -1174,4 +1173,5 @@ html.js .reveal.is-visible { transform: translateY(0); }
 
 /* ----- 26. RESPONSIVE ----- */
 @media (max-width: 1240px) {
-  .nav__link { padding: 0.45rem 
+  .nav__link { padding: 0.45rem 0.5rem; font-size: 0.85rem; }
+  .nav__cta .btn { padd

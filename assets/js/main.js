@@ -20,13 +20,10 @@
     header.classList.toggle('is-scrolled', window.scrollY > 18);
   };
 
-  /* ----- FAB + back-to-top show on scroll ----- */
-  const fab = document.querySelector('.fab');
+  /* ----- Back-to-top shows after scrolling; Book Consultation is always visible ----- */
   const backToTop = document.querySelector('.back-to-top');
   const updateFab = () => {
-    const past = window.scrollY > 400;
-    if (fab) fab.classList.toggle('is-visible', past);
-    if (backToTop) backToTop.classList.toggle('is-visible', past);
+    if (backToTop) backToTop.classList.toggle('is-visible', window.scrollY > 200);
   };
   if (backToTop) {
     backToTop.addEventListener('click', (e) => {
@@ -276,4 +273,4 @@
         'Topic: ' + (data.topic || '') + '\n\n' +
         'Message:\n' + (data.message || '')
       );
-      const mailt
+      const mailto = 'mailto:dstewart@thestewartlawpractice.com?subject=' + subject + '&body=' + bodyTe
